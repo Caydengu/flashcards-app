@@ -1,16 +1,79 @@
-# React + Vite
+# Robotics Professors Flashcards 🤖
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive flashcard web application for learning about famous robotics professors from top universities. Perfect for students, researchers, and robotics enthusiasts who want to familiarize themselves with leading figures in the field.
 
-Currently, two official plugins are available:
+## 📚 Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This application features 30 robotics professors from 6 top universities:
+- **Stanford University** (5 professors)
+- **UC Berkeley** (5 professors)
+- **MIT** (5 professors)
+- **Carnegie Mellon University** (5 professors)
+- **Georgia Tech** (5 professors)
+- **University of Michigan** (5 professors)
 
-## React Compiler
+Each professor has **5 flashcards** covering:
+- 👤 **Bio** - Who they are and their expertise
+- 🔬 **Research** - Their research focus areas
+- 🏫 **Lab** - Associated research lab
+- 🎓 **Advisor** - Their PhD advisor
+- 👥 **Student** - Notable students or work from their group
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Getting Started
 
-## Expanding the ESLint configuration
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd flashcards-app
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+npm run dev
+```
+
+4. Open your browser and navigate to `http://localhost:5173`
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+The production-ready files will be in the `dist` directory.
+
+## 🏗️ Tech Stack
+
+- **React** - UI framework
+- **Vite** - Build tool and dev server
+- **Tailwind CSS** - Styling
+- **Lucide React** - Icons
+- **PostCSS** - CSS processing
+
+## 📁 Project Structure
+
+```
+flashcards-app/
+├── src/
+│   ├── RoboticsFlashcards.jsx  # Main flashcard component
+│   ├── App.jsx                  # App entry point
+│   ├── index.css                # Global styles
+│   └── main.jsx                 # React DOM entry
+├── public/
+│   └── professors/              # Professor images (optional)
+├── index.html
+├── package.json
+├── tailwind.config.js
+└── vite.config.js
+```
