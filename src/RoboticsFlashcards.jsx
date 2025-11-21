@@ -425,12 +425,12 @@ export default function RoboticsFlashcards() {
 
   // Colors map
   const UNIVERSITY_COLORS = {
-    'Stanford': { bg: 'bg-red-800', text: 'text-red-800', border: 'border-red-200', badge: 'bg-red-100 text-red-800' },
-    'Berkeley': { bg: 'bg-blue-800', text: 'text-blue-800', border: 'border-blue-200', badge: 'bg-blue-100 text-blue-800' },
-    'MIT': { bg: 'bg-gray-800', text: 'text-gray-800', border: 'border-gray-200', badge: 'bg-gray-100 text-gray-800' },
-    'CMU': { bg: 'bg-red-700', text: 'text-red-700', border: 'border-red-200', badge: 'bg-red-100 text-red-700' },
-    'Georgia Tech': { bg: 'bg-yellow-600', text: 'text-yellow-600', border: 'border-yellow-200', badge: 'bg-yellow-100 text-yellow-800' },
-    'Michigan': { bg: 'bg-blue-900', text: 'text-blue-900', border: 'border-blue-200', badge: 'bg-blue-100 text-blue-900' }
+    'Stanford': { bg: 'bg-red-800', text: 'text-red-800', border: 'border-red-200', badge: 'bg-red-100 text-red-800', hoverBg: 'hover:bg-red-800' },
+    'Berkeley': { bg: 'bg-blue-800', text: 'text-blue-800', border: 'border-blue-200', badge: 'bg-blue-100 text-blue-800', hoverBg: 'hover:bg-blue-800' },
+    'MIT': { bg: 'bg-gray-800', text: 'text-gray-800', border: 'border-gray-200', badge: 'bg-gray-100 text-gray-800', hoverBg: 'hover:bg-gray-800' },
+    'CMU': { bg: 'bg-red-700', text: 'text-red-700', border: 'border-red-200', badge: 'bg-red-100 text-red-700', hoverBg: 'hover:bg-red-700' },
+    'Georgia Tech': { bg: 'bg-yellow-600', text: 'text-yellow-600', border: 'border-yellow-200', badge: 'bg-yellow-100 text-yellow-800', hoverBg: 'hover:bg-yellow-600' },
+    'Michigan': { bg: 'bg-blue-900', text: 'text-blue-900', border: 'border-blue-200', badge: 'bg-blue-100 text-blue-900', hoverBg: 'hover:bg-blue-900' }
   };
 
   const getCategoryIcon = (type) => {
@@ -472,6 +472,23 @@ export default function RoboticsFlashcards() {
     setCurrentIndex(0);
   };
 
+  const handleJumpToProfessor = (profName, uni) => {
+    setIsFlipped(false);
+    setFilter(uni);
+
+    // Create the deck for this university
+    const newDeck = INITIAL_DECK.filter(card => card.university === uni);
+    setDeck(newDeck);
+
+    // Find the index of the first card for this professor
+    const index = newDeck.findIndex(card => card.professor === profName);
+    if (index !== -1) {
+      setCurrentIndex(index);
+    } else {
+      setCurrentIndex(0);
+    }
+  };
+
   const currentCard = deck[currentIndex];
   const styles = UNIVERSITY_COLORS[currentCard.university] || UNIVERSITY_COLORS['Stanford'];
 
@@ -487,13 +504,34 @@ export default function RoboticsFlashcards() {
         <div className="flex flex-wrap gap-2 justify-center w-full mb-4">
           <button onClick={() => handleFilter('All')} className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${filter === 'All' ? 'bg-slate-800 text-white' : 'bg-white text-slate-600 border hover:bg-slate-100'}`}>All</button>
           {Object.keys(UNIVERSITY_COLORS).map(uni => (
-            <button
-              key={uni}
-              onClick={() => handleFilter(uni)}
-              className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${filter === uni ? styles.bg + ' text-white' : 'bg-white text-slate-600 border hover:bg-slate-100'}`}
-            >
-              {uni}
-            </button>
+            <div key={uni} className="relative group">
+              <button
+                onClick={() => handleFilter(uni)}
+                className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${filter === uni ? UNIVERSITY_COLORS[uni].bg + ' text-white' : `bg-white text-slate-600 border hover:text-white ${UNIVERSITY_COLORS[uni].hoverBg}`}`}
+              >
+                {uni}
+              </button>
+
+              {/* Dropdown Menu */}
+              <div className="absolute top-[calc(100%-1rem)] left-1/2 transform -translate-x-1/2 pt-4 w-48 hidden group-hover:block z-50">
+                <div className="bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden">
+                  <div className="py-1">
+                    {PROFESSORS.filter(p => p.university === uni).map(prof => (
+                      <button
+                        key={prof.name}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering the university filter again if nested (though they are siblings here)
+                          handleJumpToProfessor(prof.name, uni);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                      >
+                        {prof.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           ))}
           <button onClick={handleShuffle} className="px-3 py-1 rounded-full text-xs font-bold bg-white text-slate-600 border hover:bg-slate-100 flex items-center gap-1 ml-2">
             <Shuffle size={12} /> Shuffle
