@@ -422,15 +422,16 @@ export default function RoboticsFlashcards() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [filter, setFilter] = useState('All');
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   // Colors map
   const UNIVERSITY_COLORS = {
-    'Stanford': { bg: 'bg-red-800', text: 'text-red-800', border: 'border-red-200', badge: 'bg-red-100 text-red-800', hoverBg: 'hover:bg-red-800' },
-    'Berkeley': { bg: 'bg-blue-800', text: 'text-blue-800', border: 'border-blue-200', badge: 'bg-blue-100 text-blue-800', hoverBg: 'hover:bg-blue-800' },
-    'MIT': { bg: 'bg-gray-800', text: 'text-gray-800', border: 'border-gray-200', badge: 'bg-gray-100 text-gray-800', hoverBg: 'hover:bg-gray-800' },
-    'CMU': { bg: 'bg-red-700', text: 'text-red-700', border: 'border-red-200', badge: 'bg-red-100 text-red-700', hoverBg: 'hover:bg-red-700' },
-    'Georgia Tech': { bg: 'bg-yellow-600', text: 'text-yellow-600', border: 'border-yellow-200', badge: 'bg-yellow-100 text-yellow-800', hoverBg: 'hover:bg-yellow-600' },
-    'Michigan': { bg: 'bg-blue-900', text: 'text-blue-900', border: 'border-blue-200', badge: 'bg-blue-100 text-blue-900', hoverBg: 'hover:bg-blue-900' }
+    'Stanford': { bg: 'bg-red-800', text: 'text-red-800', border: 'border-red-200', badge: 'bg-red-100 text-red-800', groupHoverBg: 'group-hover:bg-red-800' },
+    'Berkeley': { bg: 'bg-blue-800', text: 'text-blue-800', border: 'border-blue-200', badge: 'bg-blue-100 text-blue-800', groupHoverBg: 'group-hover:bg-blue-800' },
+    'MIT': { bg: 'bg-gray-800', text: 'text-gray-800', border: 'border-gray-200', badge: 'bg-gray-100 text-gray-800', groupHoverBg: 'group-hover:bg-gray-800' },
+    'CMU': { bg: 'bg-red-700', text: 'text-red-700', border: 'border-red-200', badge: 'bg-red-100 text-red-700', groupHoverBg: 'group-hover:bg-red-700' },
+    'Georgia Tech': { bg: 'bg-yellow-600', text: 'text-yellow-600', border: 'border-yellow-200', badge: 'bg-yellow-100 text-yellow-800', groupHoverBg: 'group-hover:bg-yellow-600' },
+    'Michigan': { bg: 'bg-blue-900', text: 'text-blue-900', border: 'border-blue-200', badge: 'bg-blue-100 text-blue-900', groupHoverBg: 'group-hover:bg-blue-900' }
   };
 
   const getCategoryIcon = (type) => {
@@ -487,6 +488,9 @@ export default function RoboticsFlashcards() {
     } else {
       setCurrentIndex(0);
     }
+
+    // Close the dropdown
+    setOpenDropdown(null);
   };
 
   const currentCard = deck[currentIndex];
@@ -504,33 +508,40 @@ export default function RoboticsFlashcards() {
         <div className="flex flex-wrap gap-2 justify-center w-full mb-4">
           <button onClick={() => handleFilter('All')} className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${filter === 'All' ? 'bg-slate-800 text-white' : 'bg-white text-slate-600 border hover:bg-slate-100'}`}>All</button>
           {Object.keys(UNIVERSITY_COLORS).map(uni => (
-            <div key={uni} className="relative group">
+            <div
+              key={uni}
+              className="relative group"
+              onMouseEnter={() => setOpenDropdown(uni)}
+              onMouseLeave={() => setOpenDropdown(null)}
+            >
               <button
                 onClick={() => handleFilter(uni)}
-                className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${filter === uni ? UNIVERSITY_COLORS[uni].bg + ' text-white' : `bg-white text-slate-600 border hover:text-white ${UNIVERSITY_COLORS[uni].hoverBg}`}`}
+                className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${filter === uni ? UNIVERSITY_COLORS[uni].bg + ' text-white' : `bg-white text-slate-600 border group-hover:text-white ${UNIVERSITY_COLORS[uni].groupHoverBg}`}`}
               >
                 {uni}
               </button>
 
               {/* Dropdown Menu */}
-              <div className="absolute top-[calc(100%-1rem)] left-1/2 transform -translate-x-1/2 pt-4 w-48 hidden group-hover:block z-50">
-                <div className="bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden">
-                  <div className="py-1">
-                    {PROFESSORS.filter(p => p.university === uni).map(prof => (
-                      <button
-                        key={prof.name}
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering the university filter again if nested (though they are siblings here)
-                          handleJumpToProfessor(prof.name, uni);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
-                      >
-                        {prof.name}
-                      </button>
-                    ))}
+              {openDropdown === uni && (
+                <div className="absolute top-[calc(100%-1rem)] left-1/2 transform -translate-x-1/2 pt-4 w-48 z-50">
+                  <div className="bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden">
+                    <div className="py-1">
+                      {PROFESSORS.filter(p => p.university === uni).map(prof => (
+                        <button
+                          key={prof.name}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleJumpToProfessor(prof.name, uni);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                        >
+                          {prof.name}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           ))}
           <button onClick={handleShuffle} className="px-3 py-1 rounded-full text-xs font-bold bg-white text-slate-600 border hover:bg-slate-100 flex items-center gap-1 ml-2">
